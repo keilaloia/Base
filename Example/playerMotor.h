@@ -27,7 +27,7 @@ class playerMotor
 		if (speed != 0) // To avoid divide by zero errors
 		{
 			float drop = speed * friction * dt;
-			prevVolocity *= tmax((speed - drop), vspeed) / speed;// Scale the velocity based on friction.
+			prevVolocity *= tmax((speed - drop), 0) / speed;// Scale the velocity based on friction.
 		}
 
 		return Accelerate(acceldir, prevVolocity, ground_accelerate, max_velocity_ground,dt);
@@ -41,7 +41,6 @@ class playerMotor
 	
 public:
 	float maxg = 100;
-	float vspeed = 0;
 	float speed = 5;
 	float drop = 0;
 	float friction = 9;

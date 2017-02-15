@@ -23,7 +23,7 @@ class GameState : public BaseState
 	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font;
 	ObjectPool<Entity>::iterator currentCamera;
 
-protected:// check for no collision
+protected:
 	virtual base::collision checkCollision(const Transform &T, const Collider &C)
 	{
 		for (auto it = factory.begin(); it != factory.end(); it++) // for each entity
@@ -42,7 +42,7 @@ protected:// check for no collision
 
 			}
 		}
-		// no collision was found
+
 		return { -1 };
 	}
 	
@@ -108,7 +108,7 @@ public:
 			{
 				// ground check
 				float checkRad = 0.1f;
-				// check feet if colliding
+				// making the feet
 				Transform controllerFeet;
 				controllerFeet.setGlobalPosition(e.transform->getGlobalPosition() - vec2{0, checkRad + 30.f});
 
@@ -116,7 +116,7 @@ public:
 				
 				Collider controllerColl = Collider(checkRad);
 
-				// check to see if colliding if it is is grounded is true
+				// check to see if colliding if it is and grounded
 				auto cd = checkCollision(controllerFeet, controllerColl);
 				e.rigidbody->isGrounded = cd.result();
 				
