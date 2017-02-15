@@ -23,14 +23,16 @@ class GameState : public BaseState
 	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font;
 	ObjectPool<Entity>::iterator currentCamera;
 
-protected:
+protected:// check for no collision
 	virtual base::collision checkCollision(const Transform &T, const Collider &C)
 	{
 		for (auto it = factory.begin(); it != factory.end(); it++) // for each entity
 		{
 			// if this entity is collidable...
-			if (it->transform && it->collider)
+			if (it->transform && it->collider && !it->controller)
 			{
+				auto &rT = *it->transform;
+				auto &rC = *it->collider;
 				// test their bounding boxes
 				if (base::BoundsTest(&T, &C, &it->transform, &it->collider))
 				{
@@ -42,7 +44,7 @@ protected:
 
 			}
 		}
-
+		// no collision was found
 		return { -1 };
 	}
 	
@@ -66,15 +68,16 @@ public:
 		currentCamera->transform->setGlobalPosition(vec2{ 400, 300 });
 
 		// call some spawning functions!
-		factory.spawnStaticImage(spr_space, 0, 0, 800, 600);
+		//factory.spawnStaticImage(spr_space, 0, 0, 800, 600);
 
-		factory.spawnPlayer(spr_ship, spr_font);
-		factory.spawnAsteroid(spr_roid);
+		//factory.spawnPlayer(spr_ship, spr_font, vec2{ 200,-230 });
+		//factory.spawnAsteroid(spr_roid);
 
+		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 });
 		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
-		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-100 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
-		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-100 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
-		/* middle */factory.spawnPlatform(spr_ship, vec2{ 30,30 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-140 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
+		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-140 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+		/* middle */factory.spawnPlatform(spr_ship, vec2{ 30,-20 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
 
 
 	}
@@ -99,24 +102,32 @@ public:
 			bool del = false; // does this entity end up dying?
 			auto &e = *it;    // convenience reference
 
-			// rigidbody update
-			if (e.transform && e.rigidbody)
-				e.rigidbody->integrate(&e.transform, dt);
+
 
 			// controller update
 			if (e.transform && e.rigidbody && e.controller && e.playerm)
 			{
 				// ground check
-				float checkRad = 0.1f;
-				// making the feet
+				float checkRad = 5.0f;
+				// check feet if colliding
 				Transform controllerFeet;
-				controllerFeet.setGlobalPosition(e.transform->getGlobalPosition() - vec2{0, checkRad + 30.f});
+
+				vec2 newPos;
+				auto box = e.collider->getGlobalHull(&e.transform);
+				newPos.y = box.min(vec2::up());
+				newPos.x = e.transform->getGlobalPosition().x;
+
+				controllerFeet.setGlobalPosition(newPos);
 
 				std::cout << controllerFeet.getGlobalPosition().x << "," << controllerFeet.getGlobalPosition().y << std::endl;
 				
 				Collider controllerColl = Collider(checkRad);
 
-				// check to see if colliding if it is and grounded
+				auto cam = currentCamera->camera->getCameraMatrix(&currentCamera->transform);
+
+				controllerColl.draw(&controllerFeet, cam);
+
+				// check to see if colliding if it is is grounded is true
 				auto cd = checkCollision(controllerFeet, controllerColl);
 				e.rigidbody->isGrounded = cd.result();
 				
@@ -132,6 +143,11 @@ public:
 			if (e.playerm && e.rigidbody)
 				e.playerm->update(&e.rigidbody, dt);
 			// lifetime decay update
+
+			// rigidbody update
+			if (e.transform && e.rigidbody)
+				e.rigidbody->integrate(&e.transform, dt);
+
 			if (e.lifetime)
 			{
 				e.lifetime->age(dt);
@@ -176,7 +192,7 @@ public:
 							else if (it->rigidbody && !bit->rigidbody)
 							{
 								auto& e = *it;
-								//it->rigidbody->isGrounded = true;
+							
 
 								base::StaticResolution(cd, &it->transform, &it->rigidbody, 1, it->rigidbody->staticBouncer);
 							
