@@ -81,7 +81,7 @@ public:
 		return e;
 	}
 
-	ObjectPool<Entity>::iterator spawnPlayer(unsigned sprite, unsigned font)
+	ObjectPool<Entity>::iterator spawnPlayer(unsigned sprite, unsigned font, vec2 pos)
 	{
 		auto e = entities.push();
 
@@ -90,7 +90,7 @@ public:
 		e->sprite = sprites.push();
 		e->collider = colliders.push();
 		e->controller = controllers.push();
-		e->text = texts.push();
+		//e->text = texts.push();
 		e->playerm = playerm.push();
 		e->rigidbody->staticBouncer = false;
 		e->rigidbody->isGrounded = false;
@@ -98,10 +98,10 @@ public:
 		e->collider->trigger = true;
 
 
-		e->text->sprite_id = font;
-		e->text->offset = vec2{ -24,-24 };
-		e->text->off_scale = vec2{.5f,.5f};
-		e->text->setString("Player1");
+		//e->text->sprite_id = font;
+		//e->text->offset = vec2{ -24,-24 };
+		//e->text->off_scale = vec2{.5f,.5f};
+		//e->text->setString("Player1");
 
 		e->rigidbody->mass = 1.0f; 
 
@@ -109,7 +109,7 @@ public:
 		e->rigidbody->drag = 0.f;
 		e->transform->setLocalScale(vec2{48,48});
 
-		e->transform->setGlobalPosition(vec2{ 200,-230 });
+		e->transform->setGlobalPosition(pos);
 
 		e->sprite->sprite_id = sprite;
 
