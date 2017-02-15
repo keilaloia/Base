@@ -3,6 +3,8 @@
 #include "Transform.h"
 #include "Collider.h"
 
+
+
 namespace base
 {
 
@@ -10,6 +12,10 @@ class Rigidbody
 {
 public:
 	float drag, mass;
+	bool staticBouncer = true;
+	bool isGrounded = false;
+
+	vec2 gravity = vec2{ 0, -50 };
 	vec2 impulse, force, acceleration, velocity; // defaults to 0's
 
 	float angularDrag;
@@ -28,7 +34,8 @@ public:
 
 	void integrate(Transform *T, float dt)
 	{
-		acceleration += force / mass;
+
+		acceleration += force / mass + gravity;
 		velocity += acceleration * dt + impulse / mass;
 		T->setGlobalPosition(T->getGlobalPosition() + velocity * dt);
 		acceleration = -velocity * drag;
@@ -84,12 +91,16 @@ inline void DynamicResolution(const collision &cd, Transform *AT, Rigidbody *AR,
 }
 
 
-inline void StaticResolution(const collision &cd, Transform *AT, Rigidbody *AR, float bounciness = 1)
+inline void StaticResolution(const collision &cd, Transform *AT, Rigidbody *AR, float bounciness = 1, bool staticBouncer = true)
 {
-	vec2 MTV = cd.penetration * cd.normal;
-	AT->setGlobalPosition(AT->getGlobalPosition() - MTV);
-
-	AR->velocity = reflect(AR->velocity, cd.normal) * bounciness;
+		
+		vec2 MTV = cd.penetration * cd.normal;
+		AT->setGlobalPosition(AT->getGlobalPosition() - -MTV);
+	
+	
+		
+	if(staticBouncer)
+		AR->velocity = reflect(AR->velocity, cd.normal) * bounciness;
 }
 
 

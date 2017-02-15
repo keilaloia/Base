@@ -2,6 +2,7 @@
 #include "sfwdraw.h"
 #include "GameState.h"
 
+#include <cassert>
 
 /*
 	The main function should be used for application state management.
@@ -12,6 +13,10 @@ void main()
 {
 	sfw::initContext();
 
+	assert(tmax(0.5f, 0.5f) == 0.5f);
+	assert(tmax(0.5f, 0.4f) == 0.5f);
+	assert(tmax(0.4f, 0.5f) == 0.5f);
+	assert(tmax(0.4f, 0) == 0.4f);
 
 	GameState gs;
 

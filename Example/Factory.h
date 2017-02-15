@@ -2,6 +2,8 @@
 
 #include "Entity.h"
 
+using base::vec2;
+
 class Factory
 {	
 	ObjectPool<Entity>	  entities;
@@ -15,6 +17,7 @@ class Factory
 	ObjectPool<Camera>    cameras;
 	ObjectPool<Text>	  texts;
 	ObjectPool<PlayerController> controllers;
+	ObjectPool<playerMotor> playerm;
 
 public:
 
@@ -26,7 +29,8 @@ public:
 	Factory(size_t size = 512)
 								: entities(size), transforms(size), rigidbodies(size),
 								  colliders(size), sprites(size), lifetimes(size),
-								  cameras(size), controllers(size), texts(size)
+								  cameras(size), controllers(size), texts(size),
+								  playerm(size)
 	{
 	}
 
@@ -63,7 +67,6 @@ public:
 		e->sprite = sprites.push();
 		e->lifetime = lifetimes.push();
 		e->collider = colliders.push();
-
 		e->transform->setLocalPosition(pos);
 		e->transform->setLocalScale(dim);
 		e->transform->setLocalAngle(ang);
@@ -88,13 +91,25 @@ public:
 		e->collider = colliders.push();
 		e->controller = controllers.push();
 		e->text = texts.push();
+		e->playerm = playerm.push();
+		e->rigidbody->staticBouncer = false;
+		e->rigidbody->isGrounded = false;
+
+		e->collider->trigger = true;
+
 
 		e->text->sprite_id = font;
 		e->text->offset = vec2{ -24,-24 };
 		e->text->off_scale = vec2{.5f,.5f};
 		e->text->setString("Player1");
 
+		e->rigidbody->mass = 1.0f; 
+
+		
+		e->rigidbody->drag = 0.f;
 		e->transform->setLocalScale(vec2{48,48});
+
+		e->transform->setGlobalPosition(vec2{ 200,-230 });
 
 		e->sprite->sprite_id = sprite;
 
@@ -121,6 +136,21 @@ public:
 
 		return e;
 	}
+
+	ObjectPool<Entity>::iterator spawnPlatform(unsigned sprite, vec2 pos, vec2 bl, vec2 br, vec2 tr, vec2 tl)
+	{
+		auto e = entities.push();
+
+		e->transform = transforms.push();
+		e->transform->setGlobalPosition(pos);
+		
+		vec2 vrts[] = { bl, br, tr, tl };
+		e->collider = colliders.push(Collider(vrts, 4));
+
+		return e;
+	}
+
+	//ObjectPool<Entity>::iterator spawnBoots(unsigned sprite, )
 };
 
 

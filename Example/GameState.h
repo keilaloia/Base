@@ -3,6 +3,7 @@
 #include "sfwdraw.h"
 #include "BaseState.h"
 #include "Factory.h"
+#include "playerMotor.h"
 
 
 /*
@@ -22,6 +23,29 @@ class GameState : public BaseState
 	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font;
 	ObjectPool<Entity>::iterator currentCamera;
 
+protected:// check for no collision
+	virtual base::collision checkCollision(const Transform &T, const Collider &C)
+	{
+		for (auto it = factory.begin(); it != factory.end(); it++) // for each entity
+		{
+			// if this entity is collidable...
+			if (it->transform && it->collider)
+			{
+				// test their bounding boxes
+				if (base::BoundsTest(&T, &C, &it->transform, &it->collider))
+				{
+					// if true, get the penetration and normal from the convex hulls
+					auto cd = base::ColliderTest(&T, &C, &it->transform, &it->collider);
+
+					return cd;
+				}
+
+			}
+		}
+		// no collision was found
+		return { -1 };
+	}
+	
 public:
 	virtual void init()
 	{
@@ -46,9 +70,13 @@ public:
 
 		factory.spawnPlayer(spr_ship, spr_font);
 		factory.spawnAsteroid(spr_roid);
-		factory.spawnAsteroid(spr_roid);
-		factory.spawnAsteroid(spr_roid);
-		factory.spawnAsteroid(spr_roid);
+
+		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
+		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-100 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
+		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-100 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+		/* middle */factory.spawnPlatform(spr_ship, vec2{ 30,30 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+
+
 	}
 
 	virtual void stop()
@@ -60,14 +88,12 @@ public:
 	// REMEMBER TO HAVE ENTRY AND STAY states for each application state!
 	virtual size_t next() const { return 0; }
 
-
 	// update loop, where 'systems' exist
 	virtual void step()
 	{
 		float dt = sfw::getDeltaTime();
 
 		// maybe spawn some asteroids here.
-
 		for(auto it = factory.begin(); it != factory.end();) // no++!
 		{
 			bool del = false; // does this entity end up dying?
@@ -78,15 +104,33 @@ public:
 				e.rigidbody->integrate(&e.transform, dt);
 
 			// controller update
-			if (e.transform && e.rigidbody && e.controller)
+			if (e.transform && e.rigidbody && e.controller && e.playerm)
 			{
-				e.controller->poll(&e.transform, &e.rigidbody, dt);
+				// ground check
+				float checkRad = 0.1f;
+				// check feet if colliding
+				Transform controllerFeet;
+				controllerFeet.setGlobalPosition(e.transform->getGlobalPosition() - vec2{0, checkRad + 30.f});
+
+				std::cout << controllerFeet.getGlobalPosition().x << "," << controllerFeet.getGlobalPosition().y << std::endl;
+				
+				Collider controllerColl = Collider(checkRad);
+
+				// check to see if colliding if it is is grounded is true
+				auto cd = checkCollision(controllerFeet, controllerColl);
+				e.rigidbody->isGrounded = cd.result();
+				
+				// update controller
+				e.controller->poll(&e.transform, &e.rigidbody, &e.playerm, dt);
 				if (e.controller->shotRequest) // controller requested a bullet fire
 				{
-					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition()  + e.transform->getGlobalUp()*48,
-											vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
+					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition() + e.transform->getGlobalUp() * 48,
+						vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
 				}
 			}
+
+			if (e.playerm && e.rigidbody)
+				e.playerm->update(&e.rigidbody, dt);
 			// lifetime decay update
 			if (e.lifetime)
 			{
@@ -108,7 +152,8 @@ public:
 		// Physics system!
 		// You'll want to extend this with custom collision responses
 
-		
+		// it is iterator on
+		// bit is other iterator your checkking collision with
 		for(auto it = factory.begin(); it != factory.end(); it++) // for each entity
 			for(auto bit = it; bit != factory.end(); bit++)		  // for every other entity
 				if (it != bit && it->transform && it->collider && bit->transform && bit->collider)
@@ -128,14 +173,23 @@ public:
 								base::DynamicResolution(cd,&it->transform,&it->rigidbody, &bit->transform, &bit->rigidbody);
 							
 							// condition for static resolution
-							else if (it->rigidbody && !bit->rigidbody)							
-								base::StaticResolution(cd, &it->transform, &it->rigidbody);					
+							else if (it->rigidbody && !bit->rigidbody)
+							{
+								auto& e = *it;
+								//it->rigidbody->isGrounded = true;
+
+								base::StaticResolution(cd, &it->transform, &it->rigidbody, 1, it->rigidbody->staticBouncer);
+							
+							}
+
 						}
+						
+
 					}
+
 				}
 
 	}
-
 
 	virtual void draw()	
 	{
@@ -156,7 +210,12 @@ public:
 #ifdef _DEBUG
 		for each(auto &e in factory)
 			if (e.transform)
+			{
+				//std::cout << e.transform->getGlobalPosition().x << "," << e.transform->getGlobalPosition().y << std::endl;
 				e.transform->draw(cam);
+			}
+
+		//std::cout << std::endl;
 
 		for each(auto &e in factory)
 			if (e.transform && e.collider)
