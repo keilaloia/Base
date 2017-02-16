@@ -40,12 +40,12 @@ class playerMotor
 
 	
 public:
-	float maxg = 100;
+	float maxg = 150;
 	float speed = 5;
 	float drop = 0;
-	float friction = 9;
+	float friction = 7;
 	float ground_accelerate = 1000, max_velocity_ground = maxg;
-	float Air_accelerate= 500, max_velocity_Air = 100;
+	float Air_accelerate= 150, max_velocity_Air = 30;
 
 	
 	vec2 accelDir = vec2{ 0,0 };

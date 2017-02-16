@@ -23,26 +23,45 @@ public:
 			rb->addForce(T->getGlobalUp() * speed);*/
 
 		if (sfw::getKey('A'))
+		{
 			pm->accelDir.x = -1;
+			if (rb->velocity.x >= 0)
+			{
+				rb->velocity.x = -10;
+			}
+		}
+		
 
 		if (sfw::getKey('D'))
+		{
 			pm->accelDir.x = 1;
+			if (rb->velocity.x <= 0)
+			{
+				rb->velocity.x = 10;
+			}
+		}
 
 		if (sfw::getKey('S'))
+		{
 			pm->accelDir.y = -1;
+
+			if (rb->velocity.y >= 0)
+			{
+				rb->velocity.y = -10;
+			}
+		}
 			
 		// jump
 		if (rb->isGrounded == true)
 		{
 			if (sfw::getKey('W'))
 			{
-				rb->addImpulse(base::vec2{ 0,70 });
-				pm->accelDir.y = -1;
-				if (rb->velocity.y >= 70)
-				{
-					rb->velocity.y = 70;
-				}
-				
+			
+
+				rb->addImpulse(base::vec2{ 0,500 });
+				pm->accelDir.y = -1 ;
+				rb->velocity.y = 0;
+
 				//rb->addImpulse(base::vec2{ 0, 0 });
 				rb->isGrounded = false;
 			}

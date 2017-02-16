@@ -75,9 +75,9 @@ public:
 
 		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 });
 		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
-		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-140 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
-		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-140 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
-		/* middle */factory.spawnPlatform(spr_ship, vec2{ 30,-20 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-170 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
+		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-170 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
+		/* middle */factory.spawnPlatform(spr_ship, vec2{ 30,-65 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
 
 
 	}

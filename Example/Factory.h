@@ -103,7 +103,7 @@ public:
 		//e->text->off_scale = vec2{.5f,.5f};
 		//e->text->setString("Player1");
 
-		e->rigidbody->mass = 1.0f; 
+		e->rigidbody->mass = 3.0f; 
 
 		
 		e->rigidbody->drag = 0.f;
