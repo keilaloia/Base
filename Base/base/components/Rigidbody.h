@@ -15,7 +15,7 @@ public:
 	bool staticBouncer = true;
 	bool isGrounded = false;
 
-	vec2 gravity = vec2{ 0, -120 };
+	vec2 gravity = vec2{ 0, -300 };
 	vec2 impulse, force, acceleration, velocity; // defaults to 0's
 
 	float angularDrag;

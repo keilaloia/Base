@@ -137,6 +137,20 @@ public:
 		return e;
 	}
 
+	//ObjectPool<Entity>::iterator spawnBullet(unsigned sprite)
+	//{
+	//	auto e = entities.push();
+	//	
+	//	e->transform = transforms.push();
+	//	e->rigidbody = rigidbodies.push();
+
+	//	e->transform->setLocalScale(vec2{ 20,20 });
+
+	//	vec2 hullvrts[] = {{-1, 0},{0,1}, {1,1}, {}}
+
+	//	return e;
+	//}
+
 	ObjectPool<Entity>::iterator spawnPlatform(unsigned sprite, vec2 pos, vec2 bl, vec2 br, vec2 tr, vec2 tl)
 	{
 		auto e = entities.push();

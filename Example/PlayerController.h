@@ -7,6 +7,7 @@
 
 class PlayerController
 {
+
 	
 public:
 	float speed = 10, turnSpeed = 1;
@@ -15,15 +16,17 @@ public:
 
 	float shotTimer = 0.0f;
 
-	bool shotRequest = false;
+	bool ButtonD = false;
+	bool shotgunRequest = false;
 
 	void poll(base::Transform *T, base::Rigidbody *rb, playerMotor *pm, float dt)
 	{
 		/*if (sfw::getKey('W'))
 			rb->addForce(T->getGlobalUp() * speed);*/
-
+	
 		if (sfw::getKey('A'))
 		{
+			
 			pm->accelDir.x = -1;
 			if (rb->velocity.x >= 0)
 			{
@@ -34,13 +37,14 @@ public:
 
 		if (sfw::getKey('D'))
 		{
+			
+
 			pm->accelDir.x = 1;
 			if (rb->velocity.x <= 0)
 			{
 				rb->velocity.x = 10;
 			}
 		}
-
 		if (sfw::getKey('S'))
 		{
 			pm->accelDir.y = -1;
@@ -54,13 +58,16 @@ public:
 		// jump
 		if (rb->isGrounded == true)
 		{
+			rb->acceleration.y = 0;
+			rb->velocity.y = 0;
 			if (sfw::getKey('W'))
 			{
 			
+				//b->velocity.y = 100;
 
-				rb->addImpulse(base::vec2{ 0,500 });
+				rb->addImpulse(base::vec2{ 0,800 });
 				pm->accelDir.y = -1 ;
-				rb->velocity.y = 0;
+
 
 				//rb->addImpulse(base::vec2{ 0, 0 });
 				rb->isGrounded = false;
@@ -68,13 +75,13 @@ public:
 		}
 		
 
-	/*	shotTimer -= dt;
-		if (sfw::getKey(' ') && shotTimer < 0)
+		shotTimer -= dt;
+		if (sfw::getKey('F') && shotTimer < 0)
 		{
-			shotRequest = true;
+			shotgunRequest = true;
 			shotTimer = 0.86f;
 		}
-		else shotRequest = false;*/
+		else shotgunRequest = false;
 	}
 
 };

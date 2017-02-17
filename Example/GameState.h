@@ -20,7 +20,7 @@
 class GameState : public BaseState
 {
 	Factory factory;
-	unsigned spr_space, spr_ship, spr_bullet, spr_roid, spr_font;
+	unsigned spr_space, spr_ship,spr_shipr, spr_bullet, spr_roid, spr_font;
 	ObjectPool<Entity>::iterator currentCamera;
 
 protected:// check for no collision
@@ -56,6 +56,9 @@ public:
 		spr_ship = sfw::loadTextureMap("../res/ship.png");
 		spr_roid = sfw::loadTextureMap("../res/rock.png");
 		spr_font = sfw::loadTextureMap("../res/font.png",32,4);
+		spr_shipr = sfw::loadTextureMap("../res/shipr.png");
+
+
 	}
 
 	virtual void play()
@@ -74,6 +77,8 @@ public:
 		//factory.spawnAsteroid(spr_roid);
 
 		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 });
+
+
 		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
 		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-170 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
 		/* right */	factory.spawnPlatform(spr_ship, vec2{ 200,-170 }, { 50,0 }, { -100, 0 }, { -100,10 }, { 50, 10 });
@@ -95,6 +100,7 @@ public:
 	virtual void step()
 	{
 		float dt = sfw::getDeltaTime();
+		dt = dt > 5.0f ? 5.0f : dt;
 
 		// maybe spawn some asteroids here.
 		for(auto it = factory.begin(); it != factory.end();) // no++!
@@ -102,11 +108,14 @@ public:
 			bool del = false; // does this entity end up dying?
 			auto &e = *it;    // convenience reference
 
-
+			
 
 			// controller update
 			if (e.transform && e.rigidbody && e.controller && e.playerm)
 			{
+
+				
+
 				// ground check
 				float checkRad = 5.0f;
 				// check feet if colliding
@@ -119,7 +128,7 @@ public:
 
 				controllerFeet.setGlobalPosition(newPos);
 
-				std::cout << controllerFeet.getGlobalPosition().x << "," << controllerFeet.getGlobalPosition().y << std::endl;
+				//std::cout << controllerFeet.getGlobalPosition().x << "," << controllerFeet.getGlobalPosition().y << std::endl;
 				
 				Collider controllerColl = Collider(checkRad);
 
@@ -133,11 +142,13 @@ public:
 				
 				// update controller
 				e.controller->poll(&e.transform, &e.rigidbody, &e.playerm, dt);
-				if (e.controller->shotRequest) // controller requested a bullet fire
+				if (e.controller->shotgunRequest) // controller requested a bullet fire
 				{
 					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition() + e.transform->getGlobalUp() * 48,
-						vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
+						vec2{ 32,32 }, -e.transform->getGlobalUp().angle(), 200, 1);
 				}
+				std::cout << " " << e.rigidbody->velocity.y << std::endl;
+
 			}
 
 			if (e.playerm && e.rigidbody)
