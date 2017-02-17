@@ -144,8 +144,12 @@ public:
 				e.controller->poll(&e.transform, &e.rigidbody, &e.playerm, dt);
 				if (e.controller->shotgunRequest) // controller requested a bullet fire
 				{
-					factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition() + e.transform->getGlobalUp() * 48,
-						vec2{ 32,32 }, -e.transform->getGlobalUp().angle(), 200, 1);
+					for (int i = 0; i < 5; i++)
+					{
+						factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition() + e.transform->getGlobalUp() * 48,
+							vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
+					}
+					
 				}
 				std::cout << " " << e.rigidbody->velocity.y << std::endl;
 

@@ -76,7 +76,7 @@ public:
 		
 
 		shotTimer -= dt;
-		if (sfw::getKey('F') && shotTimer < 0)
+		if (sfw::getKey('F'))
 		{
 			shotgunRequest = true;
 			shotTimer = 0.86f;
