@@ -78,6 +78,8 @@ public:
 
 		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 });
 
+		factory.spawnPlayerTwo(spr_ship, spr_font, vec2{ 200,100 });
+
 
 		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
 		/* left */	factory.spawnPlatform(spr_ship, vec2{ -150,-170 }, { 50,0 }, { -100, 0 }, { -100,10 },{  50, 10 });
@@ -94,7 +96,7 @@ public:
 
 	// should return what state we're going to.
 	// REMEMBER TO HAVE ENTRY AND STAY states for each application state!
-	virtual size_t next() const { return 0; }
+	//virtual size_t next() const { return 0; }
 
 	// update loop, where 'systems' exist
 	virtual void step()
@@ -148,9 +150,11 @@ public:
 					{
 						factory.spawnBullet(spr_bullet, e.transform->getGlobalPosition() + e.transform->getGlobalUp() * 48,
 							vec2{ 32,32 }, e.transform->getGlobalAngle(), 200, 1);
+					
 					}
 					
 				}
+				std::cout << " " << e.controller->shotTimer << std::endl;
 				std::cout << " " << e.rigidbody->velocity.y << std::endl;
 
 			}
@@ -256,5 +260,15 @@ public:
 			if (e.transform && e.rigidbody)
 				e.rigidbody->draw(&e.transform, cam);
 #endif
+	}
+
+	virtual APP_STATE next() const 
+	{
+		if (sfw::getKey('Q'))
+		{
+			return VICTORY;
+		}
+		else
+			return GAME;
 	}
 };

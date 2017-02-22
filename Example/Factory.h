@@ -17,6 +17,7 @@ class Factory
 	ObjectPool<Camera>    cameras;
 	ObjectPool<Text>	  texts;
 	ObjectPool<PlayerController> controllers;
+	ObjectPool<PlayerControllerTwo> controllerTwos;
 	ObjectPool<playerMotor> playerm;
 
 public:
@@ -27,10 +28,10 @@ public:
 
 	// for now, they're all the same size
 	Factory(size_t size = 512)
-								: entities(size), transforms(size), rigidbodies(size),
-								  colliders(size), sprites(size), lifetimes(size),
-								  cameras(size), controllers(size), texts(size),
-								  playerm(size)
+			: entities(size), transforms(size), rigidbodies(size),
+			  colliders(size), sprites(size), lifetimes(size),
+			  cameras(size), controllers(size), texts(size),
+			playerm(size), controllerTwos(size)
 	{
 	}
 
@@ -84,12 +85,20 @@ public:
 	ObjectPool<Entity>::iterator spawnPlayer(unsigned sprite, unsigned font, vec2 pos)
 	{
 		auto e = entities.push();
-
+		int health = 100;
 		e->transform = transforms.push();
 		e->rigidbody = rigidbodies.push();
 		e->sprite = sprites.push();
 		e->collider = colliders.push();
 		e->controller = controllers.push();
+
+		e->controller->UP = ('W');
+		e->controller->RIGHT = ('D');
+		e->controller->DOWN = ('S');
+		e->controller->LEFT = ('A');
+		e->controller->Fire = ('F');
+		e->controller->playerID = 1;
+
 		//e->text = texts.push();
 		e->playerm = playerm.push();
 		e->rigidbody->staticBouncer = false;
@@ -98,16 +107,60 @@ public:
 		e->collider->trigger = true;
 
 
-		//e->text->sprite_id = font;
-		//e->text->offset = vec2{ -24,-24 };
-		//e->text->off_scale = vec2{.5f,.5f};
-		//e->text->setString("Player1");
+		
 
 		e->rigidbody->mass = 3.0f; 
 
 		
 		e->rigidbody->drag = 0.f;
 		e->transform->setLocalScale(vec2{48,48});
+
+		e->transform->setGlobalPosition(pos);
+
+		e->sprite->sprite_id = sprite;
+
+		return e;
+	}
+
+	ObjectPool<Entity>::iterator spawnPlayerTwo(unsigned sprite, unsigned font, vec2 pos)
+	{
+		auto e = entities.push();
+		int health = 100;
+		e->transform = transforms.push();
+		e->rigidbody = rigidbodies.push();
+		e->sprite = sprites.push();
+		e->collider = colliders.push();
+		e->controller = controllers.push();
+
+		e->controller->UP = (KEY_UP);
+		e->controller->RIGHT = (KEY_RIGHT);
+		e->controller->DOWN = (KEY_DOWN);
+		e->controller->LEFT = (KEY_LEFT);
+		e->controller->Fire = (320);
+
+		//e->controller->UP = ('W');
+		//e->controller->RIGHT = ('D');
+		//e->controller->DOWN = ('S');
+		//e->controller->LEFT = ('A');
+		//e->controller->Fire = ('F');
+		e->controller->playerID = 2;
+		
+	
+		//e->text = texts.push();
+		e->playerm = playerm.push();
+		e->rigidbody->staticBouncer = false;
+		e->rigidbody->isGrounded = false;
+
+		e->collider->trigger = true;
+
+
+	
+
+		e->rigidbody->mass = 3.0f;
+
+
+		e->rigidbody->drag = 0.f;
+		e->transform->setLocalScale(vec2{ 48,48 });
 
 		e->transform->setGlobalPosition(pos);
 
