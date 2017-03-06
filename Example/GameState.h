@@ -6,6 +6,7 @@
 #include "playerMotor.h"
 
 
+
 /*
 	The gamestate represents a discrete container of all that is 
 	necessary to drive the game experience.
@@ -22,6 +23,8 @@ class GameState : public BaseState
 	Factory factory;
 	unsigned spr_space, spr_ship,spr_shipr, spr_bullet, spr_roid, spr_font;
 	ObjectPool<Entity>::iterator currentCamera;
+
+
 
 protected:// check for no collision
 	virtual base::collision checkCollision(const Transform &T, const Collider &C)
@@ -49,6 +52,7 @@ protected:// check for no collision
 	}
 	
 public:
+	bool gameover = false;
 	virtual void init()
 	{
 		spr_bullet = sfw::loadTextureMap("../res/bullet.png");
@@ -70,15 +74,10 @@ public:
 		currentCamera = factory.spawnCamera(800, 600, 1);
 		currentCamera->transform->setGlobalPosition(vec2{ 400, 300 });
 
-		// call some spawning functions!
-		//factory.spawnStaticImage(spr_space, 0, 0, 800, 600);
 
-		//factory.spawnPlayer(spr_ship, spr_font, vec2{ 200,-230 });
-		//factory.spawnAsteroid(spr_roid);
+		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 }, 100);
 
-		factory.spawnPlayer(spr_ship, spr_font, vec2{ -200,100 });
-
-		factory.spawnPlayerTwo(spr_ship, spr_font, vec2{ 200,100 });
+		factory.spawnPlayerTwo(spr_ship, spr_font, vec2{ 200,100 }, 100);
 
 
 		/* base */	factory.spawnPlatform(spr_ship, vec2{ 0,-350 }, { -400,0 }, { 400, 0 }, { 400,100 }, { -400, 100 });
@@ -154,8 +153,8 @@ public:
 					}
 					
 				}
-				std::cout << " " << e.controller->shotTimer << std::endl;
-				std::cout << " " << e.rigidbody->velocity.y << std::endl;
+			//	std::cout << " " << e.controller->shotTimer << std::endl;
+				//std::cout << " " << e.rigidbody->velocity.y << std::endl;
 
 			}
 
@@ -217,6 +216,30 @@ public:
 							
 							}
 
+							//health collision check
+							if (it->rigidbody && bit->Health && !it->Health)
+							{
+								bit->Health->TakeDamage(&bit->sprite);
+
+								if (bit->Health->isDead(&bit->sprite) == true)
+								{
+									gameover = true;
+								}
+								std::cout << " " << bit->Health->phealth << std::endl;
+							
+							}
+							if (bit->rigidbody && it->Health && !bit->Health)
+							{
+								it->Health->TakeDamage(&it->sprite);
+
+								if (it->Health->isDead(&it->sprite) == true)
+								{
+									gameover = true;
+								}
+								std::cout << " " << it->Health->phealth << std::endl;
+
+							}
+
 						}
 						
 
@@ -261,12 +284,14 @@ public:
 				e.rigidbody->draw(&e.transform, cam);
 #endif
 	}
+	
 
-	virtual APP_STATE next() const 
+	virtual APP_STATE GameState::next() const 
 	{
-		if (sfw::getKey('Q'))
+
+		if (gameover == true)
 		{
-			return VICTORY;
+			return OPTION;
 		}
 		else
 			return GAME;

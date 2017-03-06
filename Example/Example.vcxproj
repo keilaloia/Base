@@ -130,6 +130,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Healths.h" />
     <ClInclude Include="Instructions.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="PlayerController.h" />

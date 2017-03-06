@@ -59,7 +59,7 @@ public:
 
 		accelDir = vec2{ 0,0 };
 
-		debugPrint(rb);
+		//debugPrint(rb);
 
 		//if (ground_accelerate = maxg)
 		//{
@@ -67,8 +67,8 @@ public:
 		//}
 	}
 
-	void debugPrint(base::Rigidbody *rb)
-	{
-		std::cout << "player grounded:" << (rb->isGrounded ? "true" : "false") << std::endl;
-	}
+	//void debugPrint(base::Rigidbody *rb)
+	//{
+		//std::cout << "player grounded:" << (rb->isGrounded ? "true" : "false") << std::endl;
+	//}
 };

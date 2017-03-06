@@ -5,7 +5,7 @@
 #include "Instructions.h"
 #include "Victory.h"
 #include "BaseState.h"
-
+#include "splash.h"
 #include <cassert>
 
 /*
@@ -23,9 +23,11 @@ void main()
 	Option option;
 	Instructions instruct;
 	Victory victory;
+	Splash splash;
 
 	option.init(font);
 	instruct.init(font);
+	splash.init(font);
 	option.init(font);
 	victory.init(font);
 
@@ -51,38 +53,26 @@ void main()
 			state = option.next();
 			break;
 
-		//case ENTER_INSTRUCTIONS:
-		//	instruct.play();
-	//	case INSTRUCTIONS:
-			//sfw::drawTexture(r, 0, 600, 800, 600, 0, false, 0, GREEN);
-
-		//	instruct.draw();
-
-		//	instruct.step();
-		//	state = instruct.next();
-		//	break;
 		case ENTER_GAME:
-			//gs.play();
+	
 			gs.play(); // Should be called each time the state is transitioned into
 
 		case GAME:
 			gs.draw();
 			gs.step();
 
-			state =gs.next();
+			state = gs.next();
 			break;
+
 
 		case ENTER_SPLASH:
-			victory.play();
-
-		case VICTORY:
-			gs.draw();
-			gs.step();
-
-			victory.draw();
-			victory.step();
-			state = victory.next();
+			splash.play();
+		case SPLASH:
+			splash.step();
+			splash.draw();
+			state = splash.next();
 			break;
+
 		case TERMINATE: quit = true;
 		}
 				

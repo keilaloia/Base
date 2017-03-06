@@ -4,7 +4,7 @@
 
 #include "PlayerController.h"
 #include "PlayerControllerTwo.h"
-
+#include "Healths.h"
 #include "PlayerMotor.h"
 
 using namespace base;
@@ -21,7 +21,7 @@ public:
 	ObjectPool<Camera>::iterator camera;
 	ObjectPool<Text>::iterator text;
 	ObjectPool<playerMotor>::iterator playerm;
-
+	ObjectPool<pHealth>::iterator Health;
 	// example of a component in this project
 	ObjectPool<PlayerController>::iterator controller;
 	ObjectPool<PlayerControllerTwo>::iterator controllerTwo;
@@ -35,6 +35,7 @@ public:
 		sprite.free();
 		camera.free();
 		text.free();
+		Health.free();
 
 		playerm.free();
 		controller.free();

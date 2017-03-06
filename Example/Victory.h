@@ -25,7 +25,10 @@ public:
 	// called on update
 	void draw()
 	{
-		char buffer[64];
+		sfw::drawString(font, "Start Game!", 100, 120, 16, 16, 0, 0, select == 0 ? MAGENTA : WHITE);
+		sfw::drawString(font, "Not cool enough to play this game", 100, 100, 16, 16, 0, 0, select == 1 ? MAGENTA : WHITE);
+
+		sfw::drawLine(100, 80, 100 + 500 * (timer / 5.f), 80);
 	}
 	//works like update
 	void step() 

@@ -15,17 +15,21 @@ public:
 	void draw()
 	{
 		char buffer[64];
-		//sprintf_s(buffer, "Press Enter to start the game! \n %f", timer);
+
 		sfw::drawString(font, buffer, 100, 100, 20, 20);
 		sfw::drawLine(100, 80, 100 + 500 * (timer / 5.f), 80);
 	}
 	//works like update
 	void step() { timer -= sfw::getDeltaTime(); }
 
-	APP_STATE next()
+	APP_STATE next() const
 	{
 		if (timer < 0 || (sfw::getKey(KEY_ENTER)))
+		{
 			return TERMINATE;
-		return SPLASH;
+
+		}
+
+			return SPLASH;
 	}
 };

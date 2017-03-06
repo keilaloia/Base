@@ -25,7 +25,7 @@ public:
 			select = 1 - select; //flips seletion between 0 and 1
 		}
 	}
-	APP_STATE next() const
+	APP_STATE Option::next() const
 	{
 		if (sfw::getKey(KEY_ENTER))
 		{
