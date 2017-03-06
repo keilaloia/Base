@@ -17,6 +17,7 @@
 	The game state updates the entities within the factory using
 	a series of 'systems.'
 */
+bool gameover = false;
 
 class GameState : public BaseState
 {
@@ -52,9 +53,9 @@ protected:// check for no collision
 	}
 	
 public:
-	bool gameover = false;
 	virtual void init()
 	{
+
 		spr_bullet = sfw::loadTextureMap("../res/bullet.png");
 		spr_space = sfw::loadTextureMap("../res/space.jpg");
 		spr_ship = sfw::loadTextureMap("../res/ship.png");
@@ -67,6 +68,8 @@ public:
 
 	virtual void play()
 	{
+		gameover = false;
+
 		// delete any old entities sitting around
 		for (auto it = factory.begin(); it != factory.end(); it->onFree(), it.free());
 
